@@ -1,0 +1,677 @@
+openapi: 3.0.1
+info:
+  title: Villa Agapi App API documentation
+  description: API documentation for Villa Agapi App.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8082
+    description: development server
+  - url: https://villa-agapi-344fd44fcd28.herokuapp.com/
+    description: production server
+tags:
+  - name: authentication
+    description: Authentication of the user after login. After a successful response, a token can be retrieved and used as bearer auth for other requests
+  - name: users
+    description: API requests for users
+  - name: booking
+    description: booking request
+  - name: markers
+    description: get markers
+  - name: dialogFlow
+    description: send user's text to dialogFlow
+  - name: problem
+    description: send user's problem
+paths:
+  /data/api/user/{id}:
+    get:
+      tags:
+        - users
+      summary: Get user by ID
+      description: Retrieve user information by their ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user to retrieve.
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                user:
+                - id: 1
+                  name: user1
+                  email: user@del.gr
+                  created_date: 2023-09-01 07:06:00
+                  arrival: 2023-11-08 07:40:27
+                  departure: 2023-11-08 07:40:27
+                  firstname: Manos
+                  lastname: Karapiperakis
+                  cleaningprogram: [2023-11-09, 2023-11-09]
+                  phone: 6944247486
+                  country: Greece,
+                  role: admin
+        "401":
+          description: Authorization header required
+        "404":
+          description: User not found
+        "500":
+          description: Internal server error
+      security:
+        - BearerAuth: []
+    put:
+      tags:
+        - users
+      summary: Update user by ID
+      description: Update user by their ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user to retrieve.
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: The email of the user.
+                  example: "test@gmail.com"
+                arrival:
+                  type: string
+                  description: Arrival date.
+                  example: "2023-11-08 07:40:27"
+                departure:
+                  type: string
+                  description: Departure date.
+                  example: "2023-11-08 07:40:27"
+                cleaningprogram:
+                  type: array
+                  description: cleaningprogram.
+                  example: ["2023-11-08", "2023-11-09"]
+                role:
+                  type: string
+                  description: role of the user.
+                  example: "visitor"
+                firstname:
+                  type: string
+                  description: The first name of the user.
+                  example: "Manos"
+                lastname:
+                  type: string
+                  description: The last name of the user.
+                  example: "Karapiperakis"
+                phone:
+                  type: string
+                  description: The phone number of the user.
+                  example: "6944247486"
+                country:
+                  type: string
+                  description: The country of the user.
+                  example: "Greece"
+                device:
+                  type: string
+                  description: The device of the user.
+                  example: "android"
+      responses:
+        "200":
+          description: User update was successfull
+        "401":
+          description: Authorization header required
+        "404":
+          description: User not found
+        "500":
+          description: Internal server error
+      security:
+        - BearerAuth: []
+  /data/api/users:
+    get:
+      tags:
+        - users
+      summary: Get a list of users
+      description: Retrieve a list of all users.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                users:
+                  - id: 1
+                    name: user1
+                    is_active: true
+                    email: user@del.gr
+                    arrival: 2023-11-08 07:40:27
+                    departure: 2023-11-08 07:40:27
+                    country: Greece
+                    phone: 6944247486
+                    role: admin
+                    device: ios
+                    firstname: Manos
+                    lastname: Karapiperakis
+                    cleaningprogram: [2023-11-09, 2023-11-09]
+                  - id: 2
+                    name: user2
+                    is_active: false
+                    email: anotherUser@gmail.com
+                    arrival: 2023-11-08 07:40:27
+                    departure: 2023-11-08 07:40:27
+                    country: Austria
+                    phone: 6944247486
+                    role: visitor
+                    device: admin
+                    firstname: Manos
+                    lastname: Karapiperakis
+                    cleaningprogram: [2023-11-09, 2023-11-09]
+        "401":
+          description: Authorization header required
+        "500":
+          description: Internal server error
+      security:
+        - BearerAuth: []
+    post:
+      tags:
+        - users
+      summary: Create a new user
+      description: Create a new user with the provided information.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The user name of the user.
+                  example: "JohnDoe4"
+                email:
+                  type: string
+                  description: The email of the user.
+                  example: "JohnDoe@gmail.com"
+                password:
+                  type: string
+                  description: The password of the user.
+                  example: "password"
+                arrival:
+                  type: string
+                  description: Arrival date.
+                  example: "2023-11-08 07:40:27"
+                departure:
+                  type: string
+                  description: Departure date.
+                  example: "2023-11-08 07:40:27"
+                role:
+                  type: string
+                  description: role of the user.
+                  example: "visitor"
+                firstname:
+                  type: string
+                  description: The first name of the user.
+                  example: "Manos"
+                lastname:
+                  type: string
+                  description: The last name of the user.
+                  example: "Karapiperakis"
+                cleaningprogram:
+                  type: array
+                  description: cleaningprogram.
+                  example: ["2023-11-08", "2023-11-09"]
+                phone:
+                  type: string
+                  description: The phone number of the user.
+                  example: "6944247486"
+                country:
+                  type: string
+                  description: The country of the user.
+                  example: "Greece"
+              required:
+                - username
+                - password
+                - arrival
+                - departure
+      responses:
+        "201":
+          description: User created successfully
+        "400":
+          description: Bad request
+        "401":
+          description: Authorization header required
+        "409":
+          description: User already exist
+        "500":
+          description: Internal server error
+      security:
+        - BearerAuth: []
+  /data/api/login: # Existing login path
+    post:
+      tags:
+        - authentication
+      summary: User login
+      description: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The name of the user.
+                  example: "admin"
+                password:
+                  type: string
+                  description: The name of the user.
+                  example: "admin"
+              required:
+                - username
+                - password
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QxMjMiLCJpYXQiOjE2OTE5NjIyMjEsImV4cCI6MTY5MTk2NTgyMX0.ZwWZO4lQ8pF3p-lKt7UK70y5lw6_NOF2mnrgJSfY4LQ,
+                username: test123,
+                userId: 76,
+                role: admin
+        "500":
+          description: User does not exist
+  /data/api/booking:
+    post:
+      tags:
+        - booking
+      summary: User booking
+      description: booking request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startDate:
+                  type: string
+                  description: Start date in calendar in format <month day year>
+                  example: "sep 25 2023"
+                endDate:
+                  type: string
+                  description: End date in calendar in format <month day year>
+                  example: "sep 30 2023"
+                fullName:
+                  type: string
+                  description: Full name of the user
+                  example: "John Doe"
+                email:
+                  type: string
+                  description: Email of the user
+                  example: "JohnDoe@gmail.com"
+                comments:
+                  type: string
+                  description: Comments
+                  example: "Comments here"
+                visitors:
+                  type: string
+                  description: Number of visitors
+                  example: "3"
+              required:
+                - startDate
+                - endDate
+                - fullName
+                - email
+                - comments
+                - visitors
+      responses:
+        "200":
+          description: Successful booking
+          content:
+            application/json:
+              example:
+                bookingId: 12345
+        "401":
+          description: Authorization header required
+        "500":
+          description: Booking failed
+      security:
+        - BasicAuth: []
+    get:
+      tags:
+        - booking
+      summary: Get a list of booking requests
+      description: Retrieve a list of all booking requests.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                booking_requests:
+                  - id: 1
+                    visitors: 3
+                    name: John Doe
+                    email: johndoe@gmail.com
+                    comments: No comments
+                    start_date: Dec 18 2023
+                    end_date: Dec 23 2023
+                    request_date: Dec 18 2023
+                    info_message: <de2e8c3a-5ec4-0278-f235>
+                  - id: 2
+                    visitors: 5
+                    name: Manos Karapiperakis
+                    email: mkarapiperakis21@gmail.com
+                    comments: No comments
+                    start_date: Dec 28 2024
+                    end_date: Dec 31 2024
+                    request_date: Dec 28 2024
+                    info_message: <de2e8c3a-5ec4-0278-f235>
+        "401":
+          description: Authorization header required
+        "500":
+          description: Internal server error
+      security:
+        - BearerAuth: []
+  /data/api/booking/{id}:
+    delete:
+      tags:
+        - booking
+      summary: Delete booking by ID
+      description: Delete a booking request by its ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the booking to delete.
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Booking deleted successfully
+        "401":
+          description: Authorization header required
+        "404":
+          description: Booking not found
+        "500":
+          description: Internal server error
+      security:
+        - BearerAuth: []
+  /data/api/markers:
+    get:
+      tags:
+        - markers
+      summary: Get a list of markers
+      description: Retrieve a list of all markers.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                markers:
+                  - id: 1
+                    latitude: 35.29835507678177
+                    longitude: 25.251502809890747
+                    title: Marker 1
+                    type: tavern
+                    icon: icon
+                    keyWords: [food, eat]
+                  - id: 2
+                    latitude: 35.29835507678177
+                    longitude: 25.251502809890747
+                    title: Marker 2
+                    type: cafe
+                    icon: icon
+                    keyWords: [drink, coffee]
+        "500":
+          description: Internal server error
+    post:
+      tags:
+        - markers
+      summary: Create a new marker
+      description: Create a new marker
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                latitude:
+                  type: number
+                  description: Latitude of the marker
+                  example: 35.29835507678177
+                longitude:
+                  type: number
+                  description: Longitude of the marker
+                  example: 25.251502809890747
+                title:
+                  type: string
+                  description: The title of the marker
+                  example: "Marker 1"
+                type:
+                  type: string
+                  description: The type of the marker
+                  example: "cafe"
+                icon:
+                  type: string
+                  description: The icon of the marker
+                  example: "icon"
+                keyWords:
+                  type: array
+                  description: Keywords
+                  example: [drink, coffee, all]
+              required:
+                - latitude
+                - longitude
+                - title
+                - type
+                - icon
+                - keyWords
+      responses:
+        "201":
+          description: Marker created successfully
+        "400":
+          description: Bad request
+        "500":
+          description: Internal server error
+      security:
+        - BearerAuth: []
+  /data/api/marker/{id}:
+    get:
+      tags:
+        - markers
+      summary: Get marker by ID
+      description: Retrieve marker information by their ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the marker to retrieve.
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                marker:
+                  - id: 1
+                    latitude: 35.29835507678177
+                    longitude: 25.251502809890747
+                    title: Marker 1
+                    type: tavern
+                    icon: icon
+                    keyWords: [food, eat]
+        "404":
+          description: Marker not found
+        "500":
+          description: Internal server error
+    delete:
+      tags:
+        - markers
+      summary: Delete marker by ID
+      description: Delete a marker by its ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the marker to delete.
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Marker deleted successfully
+        "401":
+          description: Authorization header required
+        "404":
+          description: Marker not found
+        "500":
+          description: Internal server error
+      security:
+        - BearerAuth: []
+  /data/api/availability:
+    get:
+      tags:
+        - booking
+      summary: Get availability
+      description: Retrieve a list of all unavailable dates
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                disabledDates:
+                  - id: 1
+                    date: "2023/09/22"
+                  - id: 2
+                    date: "2023/09/28"
+        "500":
+          description: Internal server error
+    post:
+      tags:
+        - booking
+      summary: Add availability
+      description: Add a booking by giving the start and end date
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                start_date:
+                  type: string
+                  description: The start date.
+                  example: "2023-09-28"
+                end_date:
+                  type: string
+                  description: The end date.
+                  example: "2023-09-30"
+              required:
+                - start_date
+                - end_date
+      responses:
+        "200":
+          description: Successful response
+        "400":
+          description: Bad request
+        "500":
+          description: Internal server error
+      security:
+        - BearerAuth: []
+  /data/api/dialogFlow:
+    post:
+      tags:
+        - dialogFlow
+      summary: Interact with DialogFlow
+      description: Send a text to DialogFlow and receive a response.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  description: The text to send to DialogFlow.
+                  example: "Hello, how are you?"
+              required:
+                - text
+      responses:
+        "200":
+          description: Successful response
+        "400":
+          description: Bad request
+        "500":
+          description: Internal server error
+      security:
+        - BasicAuth: []
+  /data/api/problem:
+    post:
+      tags:
+        - problem
+      summary: Report a problem
+      description: User reports a problem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullName:
+                  type: string
+                  description: The name of the user.
+                  example: "John Doe"
+                subject:
+                  type: string
+                  description: The subject of the problem.
+                  example: "Electricity problem"
+                problem:
+                  type: string
+                  description: Description of the problem.
+                  example: "We face a problem with the electricity"
+              required:
+                - fullName
+                - subject
+                - problem
+      responses:
+        "200":
+          description: Successful response
+        "400":
+          description: Bad request
+        "401":
+          description: Authorization header required
+        "500":
+          description: Internal server error
+      security:
+        - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    BasicAuth:
+      type: http
+      scheme: basic
+    LoginAuth:
+      type: http
+      scheme: basic
